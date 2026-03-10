@@ -168,13 +168,24 @@ io.on("connection", socket => {
 
             if (session.messagesSinceLastIntervention >= AI_RESPONSE_THRESHOLD) {
                 try {
-                    const summaries = [];
-                    for (const observer of session.observers) {
-                        const obsSummary = await observer.observe(session.messages);
-                        summaries.push(obsSummary); // structured {agent, summary}
+                    let summaries = [];
+                    try {
+                        summaries = await Promise.all(
+                            session.observers.map(observer => observer.observe(session.messages))
+                        );
+                    } catch (err) {
+                        console.error("Error generating observer summaries:", err);
+                        return;
                     }
                     io.to(sessionId).emit("ai-start");
-                    const mediatorResponse = await session.mediator.intervene(summaries);
+                    let mediatorResponse = "";
+                    try {
+                        // mediator.intervene expects an array (conversation/messages)
+                        mediatorResponse = await session.mediator.intervene(summaries, session.messages);
+                    } catch (err) {
+                        console.error("Error generating mediator response:", err);
+                        return;
+                    }
                     io.to(sessionId).emit("ai-end");
 
                     if (mediatorResponse && mediatorResponse !== "") {
@@ -188,6 +199,7 @@ io.on("connection", socket => {
                     }
 
                     session.messagesSinceLastIntervention = 0;
+                    session.mediator.lastHandledIndex = session.messages.length;
                 } catch (err) {
                     console.error("Error generating AI response:", err);
                 }
