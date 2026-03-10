@@ -1,0 +1,199 @@
+import { useState, useEffect, useRef, type SetStateAction} from "react";
+import socket from "../socket";
+import "./Chat.css";
+
+interface Message {
+    sender: string;
+    content: string;
+    time?: string;
+}
+
+export default function Chat() {
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [input, setInput] = useState("");
+
+    const [username, setUsername] = useState("");
+    const [isTyping, setIsTyping] = useState(false);
+    const [sessionId, setSessionId] = useState<string | null>(null);
+    const [typingUsers, setTypingUsers] = useState(new Set());
+    const [isUserTyping, setIsUserTyping] = useState(false);
+    const typingTimeout = useRef(null);
+
+    const colourMap: { [key: string]: string } = {
+        Red: "text-red-600",
+        Blue: "text-blue-600",
+        Green: "text-green-600",
+        Yellow: "text-yellow-600",
+    };
+
+    const handleInputChange = (e: { target: { value: SetStateAction<string>; }; }) => {
+        console.log("handleInputChange fired");
+        setInput(e.target.value);
+
+        console.log("Local typing detected");
+
+        if (!isUserTyping) {
+            setIsUserTyping(true);
+            socket.emit('typing', { sessionId: sessionId, username, isTyping: true });
+            console.log("Emit typing: true");
+        }
+
+        if (typingTimeout.current) clearTimeout(typingTimeout.current);
+
+        // @ts-ignore
+        typingTimeout.current = setTimeout(() => {
+            setIsUserTyping(false);
+            socket.emit('typing', { sessionId: sessionId, username, isTyping: false });
+        }, 1000); // 1 second idle → stopped typing
+    };
+
+    // @ts-ignore
+    useEffect(() => {
+        socket.on('userTyping', ({ username: user, isTyping }) => {
+            setTypingUsers((prev) => {
+                const newSet = new Set(prev);
+                if (isTyping) newSet.add(user);
+                else newSet.delete(user);
+                return newSet;
+            });
+        });
+
+        return () => socket.off('userTyping');
+    }, []);
+
+    useEffect(() => {
+        // Get sessionId from URL query params
+        const urlParams = new URLSearchParams(window.location.search);
+        const sharedSessionId = urlParams.get("sessionId"); // e.g., ?sessionId=abc123
+
+        // Join the session (existing or new)
+        socket.emit("join session", { sessionId: sharedSessionId });
+
+        socket.on("session joined", ({ sessionId, username }) => {
+            setUsername(username);
+            setSessionId(sessionId);
+        });
+
+        // Listen for messages
+        socket.on("chat message", (msg: Message) => {
+            setMessages((prev) => [msg, ...prev]);
+        });
+
+        socket.on("ai-start", () => {
+            setIsTyping(true);
+            setMessages((prev) => [{ sender: "AI Agent", content: "" }, ...prev]);
+        });
+
+        socket.on("ai-update", (text: string) => {
+            setMessages((prev) => {
+                const updated = [...prev];
+                const first = updated[0];
+                if (first?.sender === "AI Agent") {
+                    updated[0] = { ...first, content: text };
+                }
+                return updated;
+            });
+        });
+
+        socket.on("ai-end", () => setIsTyping(false));
+
+        return () => {
+            socket.off("session joined");
+            socket.off("chat message");
+            socket.off("ai-start");
+            socket.off("ai-update");
+            socket.off("ai-end");
+        };
+    }, []);
+
+    useEffect(() => {
+        socket.on("chat history", (history: Message[]) => {
+            setMessages(history);
+        });
+
+        return () => {
+            socket.off("chat history");
+        };
+    }, []);
+
+    const sendMessage = () => {
+        if (!input.trim() || !username || !sessionId) return;
+
+        socket.emit("chat message", { sessionId, content: input });
+        setInput("");
+    };
+
+    return (
+        <div className="app-container">
+            {sessionId && (
+                <div className="join-link">
+                    Share this link for others to join:
+                    <code>{`${window.location.origin}?sessionId=${sessionId}`}</code>
+                </div>
+            )}
+            {/* Messages area */}
+            <div className="messages-container">
+                {isTyping && (
+                    <div className="italic text-gray-500 mt-2">
+                        AI Agent is typing...
+                    </div>
+                )}
+                <div className="typing-indicator">
+                    {typingUsers.size > 0 && (
+                        <span>
+      {[...typingUsers].join(', ')} {typingUsers.size === 1 ? 'is' : 'are'} typing...
+    </span>
+                    )}
+                </div>
+                {messages.map((msg, i) => (
+                    <div key={i} className="mb-2">
+                        <strong>{msg.sender}: </strong>
+                        <span>{msg.content}</span>
+                        {msg.time && <span className="text-gray-400 ml-2">{msg.time}</span>}
+                    </div>
+                ))}
+
+            </div>
+
+            {/* Message input */}
+            <div className="control-container">
+                <div className="user-control">
+                    {username && (
+                        <div className={`mb-2 font-bold ${colourMap[username]}`}>
+                            You are: {username}
+                        </div>
+                    )}
+                    <input
+                        type="text"
+                        id="chat-input"
+                        placeholder="Type a message..."
+                        value={input}
+                        onChange={handleInputChange}
+                        className="message-input"
+                        disabled={!username}
+                        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                    />
+                </div>
+                <div className="button-control">
+                    <button
+                        onClick={sendMessage}
+                        className="send-message"
+                        disabled={!username}
+                    >
+                        Send
+                    </button>
+                    <button
+                        onClick={() => {
+                            if (sessionId) {
+                                window.open(`http://13.62.133.82:4000/transcript/${sessionId}`);
+                            }
+                        }}
+                        className="download-button"
+                    >
+                        Download Transcript
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
