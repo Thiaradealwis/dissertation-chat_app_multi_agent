@@ -6,7 +6,7 @@ import MediatorAgent from "./agents/MediatorAgent.js";
 
 export const sessions = {}
 
-export function createSession(sessionId) {
+export function createSession(sessionId, client) {
     const convergenceAgent = new ConvergenceAgent("convergence_agent", client);
     const equalConsiderationAgent = new EqualConsiderationAgent("equalConsiderationAgent", client);
     const equalParticipationAgent = new EqualParticipationAgent("equalParticipationAgent", client);

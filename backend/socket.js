@@ -2,7 +2,7 @@ import {colours, AI_RESPONSE_THRESHOLD, getTimestamp} from "./config.js";
 import { sessions, createSession} from "./session.js";
 import { saveMessage} from "./storage.js";
 
-export function initSocket(io) {
+export function initSocket(io, client) {
     io.on("connection", async socket => {
         const {
             participantID,
@@ -16,7 +16,7 @@ export function initSocket(io) {
         const sessionKey = `${groupID}-round${round}`;
 
         if (!sessions[sessionKey]) {
-            createSession(sessionKey);
+            createSession(sessionKey, client);
         }
 
         const session = sessions[sessionKey];

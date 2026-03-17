@@ -1,0 +1,45 @@
+{
+  "sessionKey": "01KKZ082384GZ79J27NVC3WZPW-round1",
+  "groupID": "01KKZ082384GZ79J27NVC3WZPW",
+  "round": "1",
+  "scenario": "B",
+  "mediatorOn": false,
+  "participants": {
+    "sMY2MyJqrNCYUmMBAAAB": "01KKYBNKHTCN0GNQ0508DMQMAK",
+    "6SfFGCVAjttEDdcaAAAD": "01KKYBMEKEXZ4MBKXS0R13V3EB",
+    "UVMIgsixBhuv3PZBAAAF": "01KKYBPASD704R56AKMGS82ZGV"
+  },
+  "startedAt": "2026-03-17T23:00:43.791Z",
+  "messages": [
+    {
+      "sender": "Blue",
+      "content": "hiiii",
+      "timestamp": "23:00"
+    },
+    {
+      "sender": "Green",
+      "content": "whats up",
+      "timestamp": "23:00"
+    },
+    {
+      "sender": "Green",
+      "content": "not muhc",
+      "timestamp": "23:00"
+    },
+    {
+      "sender": "Green",
+      "content": "you",
+      "timestamp": "23:00"
+    },
+    {
+      "sender": "Blue",
+      "content": "idkkk",
+      "timestamp": "23:00"
+    },
+    {
+      "sender": "Green",
+      "content": "you?",
+      "timestamp": "23:01"
+    }
+  ]
+}

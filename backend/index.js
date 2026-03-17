@@ -14,19 +14,18 @@ import {sessions} from "./session.js";
 import {initSocket} from "./socket.js";
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://diss-chat-mas.s3-website.eu-north-1.amazonaws.com:5173',
     methods: ['GET', 'POST']
 }));
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: "https://diss-chat-mas.s3-website.eu-north-1.amazonaws.com:5173",
         methods: ["GET", "POST"]
     }
 });
 
 const apiKey = await getOpenAIKey();
-const { OpenAI } = await import("openai");
 const client = new OpenAI({ apiKey });
 io._client = client
 
