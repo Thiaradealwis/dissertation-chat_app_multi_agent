@@ -1,6 +1,15 @@
-import io from 'socket.io-client';
+import { io } from "socket.io-client";
 
-const socket = io('http://13.63.152.41:4000');
-//const socket = io('http://localhost:4000');
+const params = new URLSearchParams(window.location.search);
+
+const socket = io("http://localhost:4000", {
+    query: {
+        participantID: params.get("participantID"),
+        groupID: params.get("groupID"),
+        scenario: params.get("scenario"),
+        mediator: params.get("mediator"),
+        round: params.get("round")
+    }
+});
 
 export default socket;

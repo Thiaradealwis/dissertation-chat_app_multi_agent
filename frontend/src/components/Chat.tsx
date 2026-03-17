@@ -11,12 +11,12 @@ interface Message {
 export default function Chat() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
-
     const [username, setUsername] = useState("");
     const [isTyping, setIsTyping] = useState(false);
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [typingUsers, setTypingUsers] = useState(new Set());
     const [isUserTyping, setIsUserTyping] = useState(false);
+    const [taskComplete, setTaskComplete] = useState(false);
     const typingTimeout = useRef(null);
 
     const colourMap: { [key: string]: string } = {
@@ -27,15 +27,11 @@ export default function Chat() {
     };
 
     const handleInputChange = (e: { target: { value: SetStateAction<string>; }; }) => {
-        console.log("handleInputChange fired");
         setInput(e.target.value);
-
-        console.log("Local typing detected");
 
         if (!isUserTyping) {
             setIsUserTyping(true);
-            socket.emit('typing', { sessionId: sessionId, username, isTyping: true });
-            console.log("Emit typing: true");
+            socket.emit('typing', { username, isTyping: true });
         }
 
         if (typingTimeout.current) clearTimeout(typingTimeout.current);
@@ -43,11 +39,10 @@ export default function Chat() {
         // @ts-ignore
         typingTimeout.current = setTimeout(() => {
             setIsUserTyping(false);
-            socket.emit('typing', { sessionId: sessionId, username, isTyping: false });
-        }, 1000); // 1 second idle → stopped typing
+            socket.emit('typing', { username, isTyping: false });
+        }, 1000);
     };
 
-    // @ts-ignore
     useEffect(() => {
         socket.on('userTyping', ({ username: user, isTyping }) => {
             setTypingUsers((prev) => {
@@ -58,23 +53,21 @@ export default function Chat() {
             });
         });
 
-        return () => socket.off('userTyping');
+        return () => {socket.off('userTyping')};
     }, []);
 
     useEffect(() => {
-        // Get sessionId from URL query params
-        const urlParams = new URLSearchParams(window.location.search);
-        const sharedSessionId = urlParams.get("sessionId"); // e.g., ?sessionId=abc123
+        // Empirica passes groupID via URL params into the iframe
+        //const urlParams = new URLSearchParams(window.location.search);
+        //const sessionId = urlParams.get("groupID");
 
-        // Join the session (existing or new)
-        socket.emit("join session", { sessionId: sharedSessionId });
-
+        // Backend sets up session from URL params on connection
+        // so we just wait for session joined confirmation
         socket.on("session joined", ({ sessionId, username }) => {
             setUsername(username);
-            setSessionId(sessionId);
+            setSessionId(sessionId); // this will be the groupID
         });
 
-        // Listen for messages
         socket.on("chat message", (msg: Message) => {
             setMessages((prev) => [msg, ...prev]);
         });
@@ -97,12 +90,19 @@ export default function Chat() {
 
         socket.on("ai-end", () => setIsTyping(false));
 
+        // Signal to Empirica that this stage is complete
+        socket.on("task-complete", () => {
+            setTaskComplete(true);
+            window.parent.postMessage({ type: 'STAGE_COMPLETE' }, '*');
+        });
+
         return () => {
             socket.off("session joined");
             socket.off("chat message");
             socket.off("ai-start");
             socket.off("ai-update");
             socket.off("ai-end");
+            socket.off("task-complete");
         };
     }, []);
 
@@ -111,26 +111,27 @@ export default function Chat() {
             setMessages(history);
         });
 
-        return () => {
-            socket.off("chat history");
-        };
+        return () => {socket.off("chat history")};
     }, []);
 
     const sendMessage = () => {
         if (!input.trim() || !username || !sessionId) return;
-
-        socket.emit("chat message", { sessionId, content: input });
+        socket.emit("chat message", { content: input });
         setInput("");
     };
 
+    if (taskComplete) {
+        return (
+            <div className="app-container flex items-center justify-center">
+                <p className="text-gray-500 italic">
+                    This round is complete. Please wait for the next stage.
+                </p>
+            </div>
+        );
+    }
+
     return (
         <div className="app-container">
-            {sessionId && (
-                <div className="join-link">
-                    Share this link for others to join:
-                    <code>{`${window.location.origin}?sessionId=${sessionId}`}</code>
-                </div>
-            )}
             {/* Messages area */}
             <div className="messages-container">
                 {isTyping && (
@@ -141,8 +142,8 @@ export default function Chat() {
                 <div className="typing-indicator">
                     {typingUsers.size > 0 && (
                         <span>
-      {[...typingUsers].join(', ')} {typingUsers.size === 1 ? 'is' : 'are'} typing...
-    </span>
+                            {[...typingUsers].join(', ')} {typingUsers.size === 1 ? 'is' : 'are'} typing...
+                        </span>
                     )}
                 </div>
                 {messages.map((msg, i) => (
@@ -152,7 +153,6 @@ export default function Chat() {
                         {msg.time && <span className="text-gray-400 ml-2">{msg.time}</span>}
                     </div>
                 ))}
-
             </div>
 
             {/* Message input */}
