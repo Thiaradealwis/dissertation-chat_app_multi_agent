@@ -110,7 +110,7 @@ export function initSocket(io, client) {
                         io.to(sessionKey).emit("ai-start");
 
                         // call mediator directly
-                        const mediatorResponse = await session.mediator.intervene(session.summaries[session.summaries.length - 1], session.messages);
+                        const mediatorResponse = await session.mediator.intervene(session.summaries[session.summaries.length - 1] || [], session.messages);
 
                         io.to(sessionKey).emit("ai-end");
 
