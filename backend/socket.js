@@ -67,11 +67,12 @@ export function initSocket(io, client) {
                 if (session.mediatorOn && session.messagesSinceLastIntervention >= AI_RESPONSE_THRESHOLD) {
                     session.messagesSinceLastIntervention = 0;
                     try {
-                        let summaries = [];
+                        let newSummaries = [];
                         try {
-                            summaries = await Promise.all(
+                            newSummaries = await Promise.all(
                                 session.observers.map(observer => observer.observe(session.messages))
                             );
+                            session.summaries.push(...newSummaries);
                         } catch (err) {
                             console.error("Error generating observer summaries:", err);
                             return;
@@ -109,7 +110,7 @@ export function initSocket(io, client) {
                         io.to(sessionKey).emit("ai-start");
 
                         // call mediator directly
-                        const mediatorResponse = await session.mediator.intervene([], session.messages);
+                        const mediatorResponse = await session.mediator.intervene(session.summaries[session.summaries.length - 1], session.messages);
 
                         io.to(sessionKey).emit("ai-end");
 

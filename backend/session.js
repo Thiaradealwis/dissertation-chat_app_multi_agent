@@ -17,6 +17,7 @@ export function createSession(sessionId, client) {
         participants: {},
         participantIDs: {},
         messages: [],
+        summaries: [],
         messagesSinceLastIntervention: 0,
         observers: [convergenceAgent, equalConsiderationAgent, equalParticipationAgent, groupInfoSharingAgent],
         mediator: mediatorAgent,
