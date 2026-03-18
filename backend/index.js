@@ -14,13 +14,13 @@ import {sessions} from "./session.js";
 import {initSocket} from "./socket.js";
 
 app.use(cors({
-    origin: 'https://diss-chat-mas.s3-website.eu-north-1.amazonaws.com',
+    origin: 'http://diss-chat-mas.s3-website.eu-north-1.amazonaws.com',
     methods: ['GET', 'POST']
 }));
 
 const io = new Server(server, {
     cors: {
-        origin: "https://diss-chat-mas.s3-website.eu-north-1.amazonaws.com",
+        origin: "http://diss-chat-mas.s3-website.eu-north-1.amazonaws.com",
         methods: ["GET", "POST"]
     }
 });
