@@ -65,6 +65,7 @@ export function initSocket(io, client) {
                 io.to(sessionKey).emit("chat message", message);
 
                 if (session.mediatorOn && session.messagesSinceLastIntervention >= AI_RESPONSE_THRESHOLD) {
+                    session.messagesSinceLastIntervention = 0;
                     try {
                         let summaries = [];
                         try {
@@ -97,7 +98,6 @@ export function initSocket(io, client) {
                             io.to(sessionKey).emit("chat message", aiMessage);
                         }
 
-                        session.messagesSinceLastIntervention = 0;
                         session.mediator.lastHandledIndex = session.messages.length;
                     } catch (err) {
                         console.error("Error generating AI response:", err);
@@ -105,7 +105,31 @@ export function initSocket(io, client) {
                 }
 
                 if (session.mediatorOn && content.includes("@mediator")) {
-                    await streamAIResponse(session.messages, io, sessionKey);
+                    try {
+                        io.to(sessionKey).emit("ai-start");
+
+                        // call mediator directly
+                        const mediatorResponse = await session.mediator.intervene([], session.messages);
+
+                        io.to(sessionKey).emit("ai-end");
+
+                        if (mediatorResponse && mediatorResponse !== "") {
+                            const aiMessage = {
+                                sender: "AI Agent",
+                                content: mediatorResponse,
+                                timestamp: getTimestamp()
+                            };
+                            session.messages.push(aiMessage);
+                            saveMessage(sessionKey, session, aiMessage);
+                            io.to(sessionKey).emit("chat message", aiMessage);
+                        }
+
+                        // reset threshold counter
+                        session.messagesSinceLastIntervention = 0;
+                        session.mediator.lastHandledIndex = session.messages.length;
+                    } catch (err) {
+                        console.error("Error generating mediator response:", err);
+                    }
                 }
             }
         });
