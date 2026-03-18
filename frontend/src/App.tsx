@@ -1,19 +1,13 @@
-import { Routes, Route } from "react-router-dom";
-import ConsentPage from "./components/Consent";
-import WaitingRoom from "./components/WaitingRoom";
+import React from "react";
 import Chat from "./components/Chat";
-import ModeratorPanel from "./components/Moderator";
+import "./App.css";
 
-function App() {
+const App: React.FC = () => {
     return (
-        <Routes>
-            <Route path="/consent" element={<ConsentPage />} />
-            <Route path="/waiting-room" element={<WaitingRoom />} />
-            <Route path="/session" element={<Chat />} />
-            <Route path="/moderator" element={<ModeratorPanel />} />
-            <Route path="*" element={<ConsentPage />} /> {/* fallback */}
-        </Routes>
+        <div className="App">
+            <Chat />
+        </div>
     );
-}
+};
 
 export default App;

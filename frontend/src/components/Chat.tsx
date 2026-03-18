@@ -1,8 +1,6 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect, useRef, type SetStateAction} from "react";
 import socket from "../socket";
 import "./Chat.css";
-import {MessagesContainer} from "./MessagesContainer.tsx";
-import ChatInput from "./InputControls.tsx";
 
 interface Message {
     sender: string;
@@ -16,11 +14,17 @@ export default function Chat() {
     const [username, setUsername] = useState("");
     const [isTyping, setIsTyping] = useState(false);
     const [sessionId, setSessionId] = useState<string | null>(null);
-    const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
+    const [typingUsers, setTypingUsers] = useState(new Set());
     const [isUserTyping, setIsUserTyping] = useState(false);
     const [taskComplete, setTaskComplete] = useState(false);
     const typingTimeout = useRef(null);
 
+    const colourMap: { [key: string]: string } = {
+        Red: "text-red-600",
+        Blue: "text-blue-600",
+        Green: "text-green-600",
+        Yellow: "text-yellow-600",
+    };
 
     const handleInputChange = (e: { target: { value: SetStateAction<string>; }; }) => {
         setInput(e.target.value);
@@ -70,11 +74,18 @@ export default function Chat() {
 
         socket.on("ai-start", () => {
             setIsTyping(true);
-
+            setMessages((prev) => [{ sender: "AI Agent", content: "" }, ...prev]);
         });
 
         socket.on("ai-update", (text: string) => {
-            setMessages((prev) => [{ sender: "Mediator", content: text }, ...prev]);
+            setMessages((prev) => {
+                const updated = [...prev];
+                const first = updated[0];
+                if (first?.sender === "AI Agent") {
+                    updated[0] = { ...first, content: text };
+                }
+                return updated;
+            });
         });
 
         socket.on("ai-end", () => setIsTyping(false));
