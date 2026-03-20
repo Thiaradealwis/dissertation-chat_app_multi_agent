@@ -81,7 +81,7 @@ export function initSocket(io, client) {
                         io.to(sessionKey).emit("ai-start");
                         let mediatorResponse = "";
                         try {
-                            mediatorResponse = await session.mediator.intervene(summaries, session.messages);
+                            mediatorResponse = await session.mediator.intervene(newSummaries, session.messages);
                         } catch (err) {
                             console.error("Error generating mediator response:", err);
                             return;
