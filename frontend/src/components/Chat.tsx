@@ -74,18 +74,10 @@ export default function Chat() {
 
         socket.on("ai-start", () => {
             setIsTyping(true);
-            setMessages((prev) => [{ sender: "AI Agent", content: "" }, ...prev]);
         });
 
         socket.on("ai-update", (text: string) => {
-            setMessages((prev) => {
-                const updated = [...prev];
-                const first = updated[0];
-                if (first?.sender === "AI Agent") {
-                    updated[0] = { ...first, content: text };
-                }
-                return updated;
-            });
+            setMessages((prev) => [{ sender: "AI Agent", content: text }, ...prev]);
         });
 
         socket.on("ai-end", () => setIsTyping(false));
