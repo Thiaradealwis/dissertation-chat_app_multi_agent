@@ -130,6 +130,7 @@ export default function Chat() {
         );
     }
 
+
     return (
         <div className="app-container">
             {/* Messages area */}
@@ -148,8 +149,8 @@ export default function Chat() {
                 </div>
                 {messages.map((msg, i) => (
                     <div key={i} style={{
-                        backgroundColor: colourMap[msg.sender].bg,
-                        color: colourMap[msg.sender].text,
+                        backgroundColor: (colourMap[msg.sender] || { bg: "#f8f9fa", text: "#0c090d" }).bg,
+                        color: (colourMap[msg.sender] || { bg: "#f8f9fa", text: "#0c090d" }).text,
                         padding: "10px",
                         borderRadius: "10px",
                         marginBottom: "8px",
