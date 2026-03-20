@@ -59,6 +59,10 @@ export function saveSummaryReports(sessionKey, session, summaries){
         };
     }
 
+    if (!data.summaries) {
+        data.summaries = [];
+    }
+
     // Append new summaries (can be array or single object)
     if (Array.isArray(summaries)) {
         data.summaries.push(...summaries);
