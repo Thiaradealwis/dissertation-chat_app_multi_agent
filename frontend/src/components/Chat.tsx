@@ -19,11 +19,11 @@ export default function Chat() {
     const [taskComplete, setTaskComplete] = useState(false);
     const typingTimeout = useRef(null);
 
-    const colourMap: { [key: string]: string } = {
-        Red: "text-red-600",
-        Blue: "text-blue-600",
-        Green: "text-green-600",
-        Yellow: "text-yellow-600",
+    const colourMap: { [key: string]: { bg: string; text: string } } = {
+        Red: { bg: "#eb9486", text: "#0c090d" },
+        Blue: { bg: "#97a7b3", text: "#0c090d" },
+        Green: { bg: "#cae7b9", text: "#0c090d" },
+        Yellow: { bg: "#f3de8a", text: "#0c090d" },
     };
 
     const handleInputChange = (e: { target: { value: SetStateAction<string>; }; }) => {
@@ -147,7 +147,14 @@ export default function Chat() {
                     )}
                 </div>
                 {messages.map((msg, i) => (
-                    <div key={i} className="mb-2">
+                    <div key={i} style={{
+                        backgroundColor: colourMap[msg.sender].bg,
+                        color: colourMap[msg.sender].text,
+                        padding: "10px",
+                        borderRadius: "10px",
+                        marginBottom: "8px",
+                        maxWidth: "70%",
+                    }}>
                         <strong>{msg.sender}: </strong>
                         <span>{msg.content}</span>
                         {msg.time && <span className="text-gray-400 ml-2">{msg.time}</span>}
