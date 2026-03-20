@@ -100,7 +100,7 @@ export default function Chat() {
 
     useEffect(() => {
         socket.on("chat history", (history: Message[]) => {
-            setMessages(history);
+            setMessages([...history].reverse());
         });
 
         return () => {socket.off("chat history")};
