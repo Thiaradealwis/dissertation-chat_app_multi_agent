@@ -35,7 +35,7 @@ export default class MediatorAgent extends Agent {
             - Never repeat a prompt that went unanswered — if the group didn't respond, adapt rather than re-ask.
             
             Examples
-            Each good example picks up the content thread of what was just said and ends with one specific question. Never narrate who said what or report on the group — just reflect the substance and move forward. Always fill [placeholders] with real content from the conversation.
+            Each good example picks up the content thread of what was just said and ends with one question to stimulate the conversation. Never narrate who said what or report on the group — just reflect the substance and move forward. Always fill [placeholders] with real content from the conversation.
             EqualParticipationAgent — bringing in a quiet member
             Bad: "Some members haven't contributed yet. Could everyone share what's on their sheet so we have a fuller picture?"
             Good: "[Active member], that's an interesting thread — anyone else got something on that?"
