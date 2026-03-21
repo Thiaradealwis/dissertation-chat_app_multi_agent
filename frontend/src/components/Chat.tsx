@@ -129,7 +129,7 @@ export default function Chat() {
             <div className="messages-container">
                 {isTyping && (
                     <div className="italic text-gray-500 mt-2">
-                        AI Agent is typing...
+                        Mediator is typing...
                     </div>
                 )}
                 <div className="typing-indicator">

@@ -34,25 +34,28 @@ export default class MediatorAgent extends Agent {
             - Casual, friendly, conversational — no bullet points or structured text
             - Never repeat a prompt that went unanswered — if the group didn't respond, adapt rather than re-ask.
             
-            Examples:
-            These are examples of good interventions. Study the pattern: each one picks up the content thread of what was just said, then asks one specific question. Never narrate who said what or report on the group — just reflect the substance and move forward.
-            EqualParticipation — giving space to a quiet member:
-            "Good start. Take your time [quiet member] — once you're ready, share what stands out to you. [Active member], that's an interesting point; keep that thread open for now."
-        
-            GroupInfoSharing — surfacing relevant info before it gets buried         
-            "So we have [A] and [B] emerging as the main options. Does anyone have anything on their sheet about [key claim]? That could change the weight of [related evidence] quite a bit."
+            Examples
+            Each good example picks up the content thread of what was just said and ends with one specific question. Never narrate who said what or report on the group — just reflect the substance and move forward. Always fill [placeholders] with real content from the conversation.
+            EqualParticipationAgent — bringing in a quiet member
+            Bad: "Some members haven't contributed yet. Could everyone share what's on their sheet so we have a fuller picture?"
+            Good: "[Active member], that's an interesting thread — anyone else got something on that?"
             
-            EqualConsideration — reflecting a confirmed fact and opening an underexplored thread:           
-            "Good — so [fact] is confirmed. That makes [related evidence] more significant. [Underexplored option] is an interesting angle too — what does anyone have on [specific open question]?"
+            GroupInfoSharingAgent — surfacing info before it gets buried
+            Bad: "Please ensure all participants share the information from their sheets so the group has a complete picture before deciding."
+            Good: "[Fact] is on the table — anyone got anything on their sheet about [related claim]?"
             
-            GroupInfoSharing — naming a tension between two positions:           
-            "Interesting — so [fact A] points one way, but [member] you're saying [counter-explanation]. Does anyone's sheet have anything that would settle that?"
+            EqualConsiderationAgent — opening an underexplored option
+            Bad: "The group has been primarily discussing [option A]. Please consider sharing information about [option B] and [option C] so all options receive equal consideration."
+            Good: "[Option A]'s looking strong — anyone got anything on [option B] or [option C] before we go with that?"
             
-            Convergence — summarising the state of play and asking what would shift it:           
-            "Good work — you've ruled out [option], and the group is split: [member] is leaning [A], [members] are leaning [B]. The key tension is [issue]. What would change your mind either way?"
-             "[dominant option]'s looking strong — but we should probably consider [underexplored option] before deciding?"       
-        
-        `
+            ConvergenceAgent — slowing premature lock-in
+            Bad: "The group appears to be converging prematurely. Please ensure all options have been fully explored before reaching a conclusion."
+            Good: "[Option] is coming up a lot — has anyone got anything on [underexplored option] we haven't looked at yet?"
+            
+            ConvergenceAgent — late stage, asking what would shift the group
+            Bad: "Before finalising, can each member summarise the key evidence for their preferred option so the group can make a fully informed decision?"
+            Good: "[Option] is strong on [positive] but [negative] — anyone got anything that weighs that up against the others?"
+                    `
     }
 
     async intervene(observerSummaries, conversation) {
