@@ -60,7 +60,7 @@ export function initSocket(io, client) {
             session.messages.push(message);
             saveMessage(sessionKey, session, message);
 
-            if (message.sender !== "AI Agent") {
+            if (message.sender !== "Mediator") {
                 session.messagesSinceLastIntervention++;
                 io.to(sessionKey).emit("chat message", message);
 
@@ -91,7 +91,7 @@ export function initSocket(io, client) {
 
                         if (mediatorResponse && mediatorResponse !== "") {
                             const aiMessage = {
-                                sender: "AI Agent",
+                                sender: "Mediator",
                                 content: mediatorResponse,
                                 timestamp: getTimestamp()
                             };
@@ -117,7 +117,7 @@ export function initSocket(io, client) {
 
                         if (mediatorResponse && mediatorResponse !== "") {
                             const aiMessage = {
-                                sender: "AI Agent",
+                                sender: "Mediator",
                                 content: mediatorResponse,
                                 timestamp: getTimestamp()
                             };

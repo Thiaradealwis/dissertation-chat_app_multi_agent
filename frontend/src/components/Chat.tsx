@@ -77,7 +77,7 @@ export default function Chat() {
         });
 
         socket.on("ai-update", (text: string) => {
-            setMessages((prev) => [{ sender: "AI Agent", content: text }, ...prev]);
+            setMessages((prev) => [{ sender: "Mediator", content: text }, ...prev]);
         });
 
         socket.on("ai-end", () => setIsTyping(false));
