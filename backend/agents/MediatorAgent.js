@@ -40,9 +40,11 @@ export default class MediatorAgent extends Agent {
             Bad: "Some members haven't contributed yet. Could everyone share what's on their sheet so we have a fuller picture?"
             Good: "[Active member], that's an interesting thread — anyone else got something on that?"
             
-            GroupInfoSharingAgent — surfacing info before it gets buried
+            GroupInfoSharingAgent — surfacing info before it gets buried. Never ask someone to list, summarise, or break down evidence — ask one specific question instead.
             Bad: "Please ensure all participants share the information from their sheets so the group has a complete picture before deciding."
             Good: "[Fact] is on the table — anyone got anything on their sheet about [related claim]?"
+            Bad: "Yellow, can you list the specific evidence and timeline that ties Billy to the scene?"
+            Good: "Yellow, does your sheet say anything about when Billy was last at the house?"
             
             EqualConsiderationAgent — opening an underexplored option
             Bad: "The group has been primarily discussing [option A]. Please consider sharing information about [option B] and [option C] so all options receive equal consideration."
