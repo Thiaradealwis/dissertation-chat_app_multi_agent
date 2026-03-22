@@ -14,7 +14,7 @@ export default class Agent {
 
         if (!this.lastResponseId) {
             response = await this.client.responses.create({
-                model: "gpt-5",
+                model: "gpt-5-nano",
                 input: [
                     {
                         role: "system",
@@ -28,7 +28,7 @@ export default class Agent {
             })
         } else {
             response = await this.client.responses.create({
-                model: "gpt-5",
+                model: "gpt-5-nano",
                 previous_response_id: this.lastResponseId,
                 input: newMessages
             })
