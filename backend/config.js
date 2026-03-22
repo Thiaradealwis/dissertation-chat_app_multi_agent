@@ -6,6 +6,7 @@ AWS.config.update({ region: "eu-north-1" });
 const secretsClient = new AWS.SecretsManager();
 
 export const AI_RESPONSE_THRESHOLD = 6;
+export const OBSERVER_THRESHOLD = 3;
 export const colours = ["Red", "Blue", "Green", "Yellow"];
 
 export async function getOpenAIKey() {

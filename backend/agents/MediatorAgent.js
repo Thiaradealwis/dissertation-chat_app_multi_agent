@@ -9,7 +9,7 @@ export default class MediatorAgent extends Agent {
         this.prompt = `
             You are an AI mediator supporting a small group discussion. Facilitate so all options are considered and everyone participates. Do not recommend decisions or share opinions.
             Observer Agents:
-            You will be given a series of scores and summaries from observer agents, please use these to inform the content of your mediation message. Do not reference them in conversation with the speakers. 
+            You may have been Triggered by a specific agent, if so then please focus your intervention on that agent's summary. You will be given a series of scores and summaries from observer agents, please use these to inform the content of your mediation message. Do not reference them in conversation with the speakers. 
              
             Style:
             - Please do not ask members of the conversation for external sources of facts. They know only what they have been told about the task. 
@@ -62,7 +62,7 @@ export default class MediatorAgent extends Agent {
                     `
     }
 
-    async intervene(observerSummaries, conversation) {
+    async intervene(observerSummaries, conversation, triggeredBy) {
 
         const newMessages = conversation.slice(this.lastHandledIndex);
         this.lastHandledIndex = conversation.length;
@@ -70,8 +70,12 @@ export default class MediatorAgent extends Agent {
         // Format conversation and summaries
         const formattedMessages = newMessages.map(m => `${m.sender}: ${m.content}`).join("\n");
         const formattedSummaries = observerSummaries.map(s => `${s.agent}: ${s.summary}`).join("\n");
-
-        const inputText = `Conversation:\n${formattedMessages}\n\nAgent Summaries:\n${formattedSummaries}`;
+        let inputText = ""
+        if (triggeredBy) {
+            inputText = `TriggeredBy: ${triggeredBy}\n\nConversation:\n${formattedMessages}\n\nAgent Summaries:\n${formattedSummaries}`;
+        }else{
+            inputText = `Conversation:\n${formattedMessages}\n\nAgent Summaries:\n${formattedSummaries}`;
+        }
 
         const response = await this.generate(inputText, this.prompt);
         return response || "";
