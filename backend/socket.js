@@ -65,7 +65,7 @@ export function initSocket(io, client) {
                 session.generateSummariesCounter++;
                 io.to(sessionKey).emit("chat message", message);
 
-                if (session.mediatorOn && session.generateSummariesCounter >= OBSERVER_THRESHOLD && session.messagesSinceLastIntervention >= 4) {
+                if (session.mediatorOn && session.generateSummariesCounter >= OBSERVER_THRESHOLD && session.messages.length > 15) {
                     session.generateSummariesCounter=0;
                     try {
                         let newSummaries = [];
@@ -94,7 +94,7 @@ export function initSocket(io, client) {
                             curr.score < min.score ? curr : min
                         );
                         console.log(lowest)
-                        if (lowest.score < 0.5){
+                        if (lowest.score < 0.5 && session.messagesSinceLastIntervention > 3){
                             io.to(sessionKey).emit("ai-start");
                             let mediatorResponse = "";
                             try {
