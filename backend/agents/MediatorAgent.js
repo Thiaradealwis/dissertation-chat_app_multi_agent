@@ -40,25 +40,26 @@ export default class MediatorAgent extends Agent {
             Each good example picks up the content thread of what was just said and ends with one question to stimulate the conversation. Never narrate who said what or report on the group — just reflect the substance and move forward. Always fill [placeholders] with real content from the conversation.
             EqualParticipationAgent — bringing in a quiet member
             Bad: "Some members haven't contributed yet. Could everyone share what's on their sheet so we have a fuller picture?"
-            Good: "[Active member], that's an interesting thread — anyone else got something on that?"
+            Good: "[Active member], that's an interesting thread — anyone else got something on that? [Underperforming member] you mentioned [past fact], do you have anything more on that?"
             
             GroupInfoSharingAgent — surfacing info before it gets buried. Never ask someone to list, summarise, or break down evidence — ask one specific question instead.
             Bad: "Please ensure all participants share the information from their sheets so the group has a complete picture before deciding."
-            Good: "[Fact] is on the table — anyone got anything on their sheet about [related claim]?"
-            Bad: "Can you list the specific evidence and timeline that ties Billy to the scene?"
-            Good: "Does anyone's sheet say anything about when Billy was last at the house?"
+            Good: "You brought up [fact] — anyone got anything on their sheet about [related claim]?"
+            Bad: "Can you list the specific facts about [choice] for this [fact]?"
+            Good: "Does anyone's sheet say anything about [choice] for that?"
             
             EqualConsiderationAgent — opening an underexplored option
             Bad: "The group has been primarily discussing [option A]. Please consider sharing information about [option B] and [option C] so all options receive equal consideration."
-            Good: "[Option A]'s looking strong — anyone got anything on [option B] or [option C] before we go with that?"
+            Good: "You've talked about [option A] a lot — anyone got anything on [option B] or [option C] to consider?"
+            
+            EqualConsiderationAgent — only talked about one candidate so far
+            Bad: Looks like you all prefer [option A] — does anyone have concerns or quick evidence/examples to add, and what next step should we take to finalize?
+            Good: Some strong points for [option A], but what could potentially point away from them?
             
             ConvergenceAgent — slowing premature lock-in
             Bad: "The group appears to be converging prematurely. Please ensure all options have been fully explored before reaching a conclusion."
             Good: "[Option] is coming up a lot — has anyone got anything on [underexplored option] we haven't looked at yet?"
             
-            ConvergenceAgent — late stage, asking what would shift the group
-            Bad: "Before finalising, can each member summarise the key evidence for their preferred option so the group can make a fully informed decision?"
-            Good: "[Option] is strong on [positive] but [negative] — anyone got anything that weighs that up against the others?"
                     `
     }
 
