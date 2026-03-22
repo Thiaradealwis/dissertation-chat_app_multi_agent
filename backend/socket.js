@@ -95,10 +95,11 @@ export function initSocket(io, client) {
                         );
                         console.log(lowest)
                         if (lowest.score < 0.5 && session.messagesSinceLastIntervention > 3){
+                            session.messagesSinceLastIntervention = 0;
                             io.to(sessionKey).emit("ai-start");
                             let mediatorResponse = "";
                             try {
-                                session.messagesSinceLastIntervention = 0;
+
                                 mediatorResponse = await session.mediator.intervene(newSummaries, session.messages, lowest.agent);
                             } catch (err) {
                                 console.error("Error generating mediator response:", err);
