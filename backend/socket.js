@@ -169,7 +169,7 @@ export function initSocket(io, client) {
                     let mediatorResponse = "";
                     try {
                         session.messagesSinceLastIntervention = 0;
-                        mediatorResponse = await session.mediator.intervene(newSummaries, session.messages, lowest.agent);
+                        mediatorResponse = await session.mediator.intervene(newSummaries, session.messages, "");
                     } catch (err) {
                         console.error("Error generating mediator response:", err);
                         return;
