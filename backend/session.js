@@ -19,6 +19,7 @@ export function createSession(sessionId, client) {
         messages: [],
         summaries: [],
         messagesSinceLastIntervention: 0,
+        generateSummariesCounter: 0,
         observers: [convergenceAgent, equalConsiderationAgent, equalParticipationAgent, groupInfoSharingAgent],
         mediator: mediatorAgent,
         lastResponseId: null,

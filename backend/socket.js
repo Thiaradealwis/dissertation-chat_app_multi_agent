@@ -62,9 +62,11 @@ export function initSocket(io, client) {
 
             if (message.sender !== "Mediator") {
                 session.messagesSinceLastIntervention++;
+                session.generateSummariesCounter++;
                 io.to(sessionKey).emit("chat message", message);
 
-                if (session.mediatorOn && session.messagesSinceLastIntervention >= OBSERVER_THRESHOLD) {
+                if (session.mediatorOn && session.generateSummariesCounter >= OBSERVER_THRESHOLD) {
+                    session.generateSummariesCounter=0;
                     try {
                         let newSummaries = [];
                         try {
