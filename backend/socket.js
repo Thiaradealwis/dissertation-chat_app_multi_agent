@@ -91,6 +91,7 @@ export function initSocket(io, client) {
                         const lowest = scores.reduce((min, curr) =>
                             curr.score < min.score ? curr : min
                         );
+                        console.log(lowest)
                         if (lowest < 0.5){
                             io.to(sessionKey).emit("ai-start");
                             let mediatorResponse = "";
