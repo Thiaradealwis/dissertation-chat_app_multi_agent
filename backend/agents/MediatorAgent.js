@@ -61,6 +61,7 @@ export default class MediatorAgent extends Agent {
             Good: "[Option] is coming up a lot — has anyone got anything on [underexplored option] we haven't looked at yet?"
             
                     `
+        this.model = 'gpt-5'
     }
 
     async intervene(observerSummaries, conversation, triggeredBy) {

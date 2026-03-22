@@ -1,8 +1,9 @@
 export default class Agent {
-    constructor(id, client) {
+    constructor(id, client, model = "gpt-5-mini") {
         if (!client) throw new Error(`Client not provided to agent ${id}`);
         this.id = id;
         this.client = client;
+        this.model = model;
         this.lastResponseId = null;
     }
 
@@ -14,7 +15,7 @@ export default class Agent {
 
         if (!this.lastResponseId) {
             response = await this.client.responses.create({
-                model: "gpt-5-mini",
+                model: this.model,
                 input: [
                     {
                         role: "system",
@@ -28,7 +29,7 @@ export default class Agent {
             })
         } else {
             response = await this.client.responses.create({
-                model: "gpt-5-mini",
+                model: this.model,
                 previous_response_id: this.lastResponseId,
                 input: newMessages
             })
