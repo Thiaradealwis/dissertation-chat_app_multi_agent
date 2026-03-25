@@ -155,6 +155,7 @@ export function initSocket(io, client) {
                 }
 
                 if (session.mediatorOn && session.messagesSinceLastIntervention >= AI_RESPONSE_THRESHOLD){
+                    session.messagesSinceLastIntervention = 0;
                     let newSummaries = [];
                     try {
                         newSummaries = await Promise.all(
@@ -169,7 +170,6 @@ export function initSocket(io, client) {
                     io.to(sessionKey).emit("ai-start");
                     let mediatorResponse = "";
                     try {
-                        session.messagesSinceLastIntervention = 0;
                         mediatorResponse = await session.mediator.intervene(newSummaries, session.messages, "");
                     } catch (err) {
                         console.error("Error generating mediator response:", err);
